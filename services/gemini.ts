@@ -66,23 +66,23 @@ export const DOC_TOOLS: FunctionDeclaration[] = [
   },
   {
     name: 'generateInfographic',
-    description: 'Decompose a topic or document content into a visual infographic layout (shapes + text) on the blank page.',
+    description: 'Converts current document content or user prompts into a structured visual infographic (mindmap, steps, comparison, flowchart) on the blank page editor.',
     parameters: {
       type: Type.OBJECT,
       properties: {
-        topic: { type: Type.STRING, description: 'The main subject of the infographic' },
+        topic: { type: Type.STRING, description: 'The main subject or title of the infographic' },
         style: { type: Type.STRING, enum: ['flow', 'mindmap', 'comparison', 'steps'] },
         dataPoints: { 
           type: Type.ARRAY, 
           items: {
             type: Type.OBJECT,
             properties: {
-              label: { type: Type.STRING },
-              description: { type: Type.STRING },
-              color: { type: Type.STRING }
+              label: { type: Type.STRING, description: 'Title of this node' },
+              description: { type: Type.STRING, description: 'A 1-2 sentence summary for this point' },
+              color: { type: Type.STRING, description: 'Suggested hex color' }
             }
           },
-          description: 'Key points to visualize'
+          description: 'The extracted key information points to visualize'
         }
       },
       required: ['topic', 'style', 'dataPoints']
@@ -98,11 +98,15 @@ export class GeminiService {
       contents: `User: ${prompt}\nContext: ${context}`,
       config: {
         systemInstruction: `You are pdfpro.pro Agent.
-        - Infographics: Use 'generateInfographic' whenever a user asks to "summarize visually", "make an infographic", or "create a diagram".
-        - Choose styles wisely: 'mindmap' for brainstorming, 'steps' for processes, 'comparison' for contrasting items.
-        - Multiple Note Lists: Users can have multiple checklists and note groups. Use 'manageNoteGroup' to create them and 'manageNoteItem' to edit items.
-        - Creative Editor: Use 'editor_insertElement' for manual additions.
-        Always identify the group or layer you are acting on.`,
+        - You are an expert at document analysis, synthesis, and visual communication.
+        - Infographics: When a user asks for a visual summary, a diagram, a mindmap, or to "show me what's in this file visually", use the 'generateInfographic' tool.
+        - Use context: If a file is selected, analyze its metadata/content description provided in the context to generate the infographic.
+        - Styles:
+            * 'mindmap': Best for brainstorming and interconnected concepts.
+            * 'steps': Best for processes, timelines, or sequential data.
+            * 'comparison': Best for "pros vs cons" or contrasting two or more entities.
+            * 'flow': General directional flow.
+        - You also manage checklists and notes. Always be helpful and creative.`,
         tools: [{ functionDeclarations: DOC_TOOLS }]
       }
     });
@@ -115,7 +119,7 @@ export class GeminiService {
       callbacks,
       config: {
         responseModalities: [Modality.AUDIO],
-        systemInstruction: "You are pdfpro.pro assistant. Help design pages, draw shapes, and generate visual infographics using the generateInfographic tool.",
+        systemInstruction: "You are pdfpro.pro assistant. Help users visualize their documents. You can trigger 'generateInfographic' based on their voice commands about document content.",
         speechConfig: {
           voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Zephyr' } }
         },
