@@ -508,7 +508,6 @@ export default function App() {
     const uploadedFiles = e.target.files;
     if (!uploadedFiles) return;
 
-    // Fix: Explicitly type the file parameter as File to resolve TypeScript unknown errors.
     Array.from(uploadedFiles).forEach((file: File) => {
       const reader = new FileReader();
       reader.onload = (ev) => {
@@ -553,9 +552,20 @@ export default function App() {
         timestamp: Date.now()
       };
       
-      const nextLayers = layers.map(l => l.id === activeLayerId ? { ...l, elements: [...l.elements, newEl] } : l);
+      // Changed: Add image as a brand new layer
+      const newLayerId = `l-img-${Date.now()}`;
+      const newLayer: Layer = {
+        id: newLayerId,
+        name: `Image: ${file.name}`,
+        elements: [newEl],
+        visible: true,
+        locked: false
+      };
+      
+      const nextLayers = [newLayer, ...layers];
       setLayers(nextLayers);
-      saveToHistory(nextLayers, activeLayerId);
+      setActiveLayerId(newLayerId);
+      saveToHistory(nextLayers, newLayerId);
     };
     reader.readAsDataURL(file);
   };
@@ -577,7 +587,7 @@ export default function App() {
             <div className="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-500/20 mb-4">
               <Zap className="text-white" size={32} fill="white" />
             </div>
-            <h1 className="text-2xl font-black text-white tracking-tight">PDFPRO Ultra</h1>
+            <h1 className="text-2xl font-black text-white tracking-tight">pdfpro.pro</h1>
             <p className="text-zinc-500 text-sm">Professional Agentic Document Intelligence</p>
           </div>
           <button 
@@ -603,7 +613,7 @@ export default function App() {
           <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/30 group-hover:scale-105 transition-transform">
             <Zap className="text-white fill-white" size={20} />
           </div>
-          <span className="text-xl font-black text-white tracking-tighter">PDFPRO</span>
+          <span className="text-xl font-black text-white tracking-tighter">pdfpro.pro</span>
         </div>
 
         <div className="space-y-1 flex-1">
@@ -823,7 +833,7 @@ export default function App() {
                               <IconButton icon={Square} active={drawingMode === 'rect'} onClick={() => setDrawingMode('rect')} color="ghost" />
                               <IconButton icon={Circle} active={drawingMode === 'circle'} onClick={() => setDrawingMode('circle')} color="ghost" />
                               <div className="w-px h-4 bg-zinc-300 mx-1" />
-                              <IconButton icon={ImageIcon} onClick={() => imageUploadRef.current?.click()} color="ghost" title="Insert Image" />
+                              <IconButton icon={ImageIcon} onClick={() => imageUploadRef.current?.click()} color="ghost" title="Insert Image as New Layer" />
                               <input type="file" ref={imageUploadRef} className="hidden" accept="image/*" onChange={handleCanvasImageUpload} />
                               <IconButton icon={Workflow} onClick={() => { setCommand('Generate a mindmap infographic about '); textEditorRef.current?.focus(); }} color="ghost" title="Magic Infographic" />
                            </div>

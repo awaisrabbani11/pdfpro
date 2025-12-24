@@ -97,7 +97,7 @@ export class GeminiService {
       model: 'gemini-3-flash-preview',
       contents: `User: ${prompt}\nContext: ${context}`,
       config: {
-        systemInstruction: `You are PDFPRO Ultra Agent.
+        systemInstruction: `You are pdfpro.pro Agent.
         - Infographics: Use 'generateInfographic' whenever a user asks to "summarize visually", "make an infographic", or "create a diagram".
         - Choose styles wisely: 'mindmap' for brainstorming, 'steps' for processes, 'comparison' for contrasting items.
         - Multiple Note Lists: Users can have multiple checklists and note groups. Use 'manageNoteGroup' to create them and 'manageNoteItem' to edit items.
@@ -115,7 +115,7 @@ export class GeminiService {
       callbacks,
       config: {
         responseModalities: [Modality.AUDIO],
-        systemInstruction: "You are PDFPRO assistant. Help design pages, draw shapes, and generate visual infographics using the generateInfographic tool.",
+        systemInstruction: "You are pdfpro.pro assistant. Help design pages, draw shapes, and generate visual infographics using the generateInfographic tool.",
         speechConfig: {
           voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Zephyr' } }
         },
