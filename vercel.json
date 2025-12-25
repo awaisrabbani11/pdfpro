@@ -1,6 +1,10 @@
-
 {
   "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/$1" },
+    { "source": "/privacy-policy.html", "destination": "/privacy-policy.html" },
+    { "source": "/terms-and-conditions.html", "destination": "/terms-and-conditions.html" },
+    { "source": "/refund-policy.html", "destination": "/refund-policy.html" },
+    { "source": "/ownership.html", "destination": "/ownership.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "cleanUrls": true
